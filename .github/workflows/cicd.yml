@@ -47,5 +47,14 @@ jobs:
         cd TestLiveApp
         msbuild TestLiveApp.iOS/TestLiveApp.iOS.csproj /verbosity:normal /t:Build /p:Configuration=Release /p:Platform=iPhone /p:BuildIpa=true
 
-
-
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.3.1
+      with:
+        name: iOS Device App
+        path: TestLiveApp/TestLiveApp.iOS/bin/iPhone/Release/TestLiveApp.iOS.ipa
+    
+    - name: Setup App Center CLI
+      run: npm install --location=global appcenter-cli
+      
+    - name: Upload iOS app to App Center
+      run: appcenter distribute release --file ./TestLiveApp/TestLiveApp.iOS/bin/iPhone/Release/TestLiveApp.iOS.ipa --app icebeam/Flensa-Test-Live-App --group Collaborators --token ${{ secrets.APP_CENTER_TOKEN }}
